@@ -5,7 +5,7 @@ Gobernanza estricta para el sandbox de despliegue de modelos de Deep Learning en
 
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, field_validator
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class InferenceTelemetryEvent(BaseModel):
@@ -26,7 +26,7 @@ class InferenceTelemetryEvent(BaseModel):
     sla_threshold_ms: float = Field(default=200.0, description="Umbral de SLA acordado con Inetum (200ms)")
     is_sla_breached: int = Field(..., ge=0, le=1, description="1 si latency_ms > sla_threshold_ms, 0 en caso contrario")
     event_observed: int = Field(..., ge=0, le=1, description="1 si ocurrió degradación crítica/falla de SLA, 0 si la observación fue censurada (pod saludable)")
-    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat(), description="Timestamp ISO-8601 del evento")
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat(), description="Timestamp ISO-8601 del evento")
 
     @field_validator("model_architecture")
     @classmethod
